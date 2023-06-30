@@ -7,16 +7,18 @@ void menu(){
     //--------- iniciando a estrutura --------------------//
     heap *h = NULL;
     cliente c;
-    caixa caixas;
-    caixas.pedidoNoCaixa=NULL;
-    caixas.prioridade=false;
-//    caixas->prioridade=true;
+    caixa *caixas = (caixa*)malloc(TAM * sizeof(caixa));
+    caixas[0].pedidoNoCaixa=NULL;
+    caixas[0].prioridade=false;
+    caixas[0].quantidadeDeClientes=0;
+    caixas[1].pedidoNoCaixa=NULL;
+    caixas[1].prioridade=true;
+    caixas[1].quantidadeDeClientes=0;
     pedido p;
     int quantidade;
     int atendimento;
     struct tm *timeInfo;
     time_t horaAtual;
-
     for(int i=0;i<50;i++){
         c.pedido[i].preco=0;
         c.pedido[i].quantidade=0;
@@ -130,17 +132,45 @@ void menu(){
             scanf("%d", &op2);
             if (op2 == 1) {
                 puts("Pedido cadastrado! Realize o pagamento no caixa");
-                heap *novo = cria_heap(c);
-                caixas.pedidoNoCaixa = uniao(caixas.pedidoNoCaixa, novo);
-                for (int i = 0; i < 50; i++) {
-                    c.pedido[i].preco = 0;
-                    c.pedido[i].quantidade = 0;
-                    strcpy(c.pedido[i].comida, "");
+                if(atendimento==1) {
+                    heap *novo = cria_heap(c);
+                    caixas[0].pedidoNoCaixa = uniao(caixas[0].pedidoNoCaixa, novo);
+                    for (int i = 0; i < 50; i++) {
+                        c.pedido[i].preco = 0;
+                        c.pedido[i].quantidade = 0;
+                        strcpy(c.pedido[i].comida, "");
+                    }
+                    c.valorTotal = 0;
+                    op = 0;
+                    printf("CAIXA 1: PRIORITARIO");
+                    imprime(caixas[0].pedidoNoCaixa);
+                    caixas[0].quantidadeDeClientes = caixas[0].quantidadeDeClientes + 1;
                 }
-                c.valorTotal = 0;
-                op=0;
+                if(atendimento==2){
+                    heap *novo = cria_heap(c);
+                    caixas[1].pedidoNoCaixa = uniao(caixas[1].pedidoNoCaixa, novo);
+                    for (int i = 0; i < 50; i++) {
+                        c.pedido[i].preco = 0;
+                        c.pedido[i].quantidade = 0;
+                        strcpy(c.pedido[i].comida, "");
+                    }
+                    c.valorTotal = 0;
+                    op = 0;
 
-                imprime(caixas.pedidoNoCaixa);
+                    printf("CAIXA 2: NAO PRIORITARIO");
+                    imprime(caixas[1].pedidoNoCaixa);
+                    caixas[1].quantidadeDeClientes = caixas[1].quantidadeDeClientes + 1;
+                }
+            }
+            if(caixas[0].quantidadeDeClientes==3){
+                int opcao,x;
+                printf("\n3 clientes para 1 caixa. Deseja criar mais algum caixas? 1 para sim e 2 para nao\n");
+                scanf("%d",&opcao);
+                if(opcao==1){
+                    printf("Quantos?");
+                    scanf("%d",&x);
+                    *caixas=aumentarCaixas(caixas,x);
+                }
             }
             if (op2 > 2 || op2 < 1) {
                 puts("OPCAO INCORRETA,TENTAR NOVAMENTE.");
@@ -174,6 +204,15 @@ heap* cria_heap(cliente c){
     return h;
 }
 
+caixa aumentarCaixas(caixa *c,int tamanho){
+    caixa *temp = (caixa *)realloc(c, tamanho * sizeof(caixa));
+    if (temp == NULL) {
+        perror("Falha ao realocar memória");
+        free(c);
+        return *temp;
+    }
+    return *temp;
+}
 
 void troca_filhos (heap* a){
     heap *aux=a->esq;
@@ -205,19 +244,19 @@ heap * uniao_heaps(heap* h1, heap * h2)
     return h1;
 }
 
-void imprime(heap *h){
-    if (h != NULL){
+void imprime(heap *h) {
+    if (h != NULL) {
         printf("\nCLIENTE SENHA: \n");
-        printf("HORARIO: %d:%d:%d\n",h->clientes.hora,h->clientes.minuto,h->clientes.segundo);
-        for(int i=0;h->clientes.pedido[i].preco!=0;i++){
-            printf("PEDIDO: %s %dx",h->clientes.pedido[i].comida,h->clientes.pedido[i].quantidade);
-            if(h->esq != NULL)
-                printf("(E:%s)",h->esq->clientes.pedido[i].comida);
-            if(h->dir != NULL)
-                printf("(D:%s)",h->dir->clientes.pedido[i].comida);
+        printf("HORARIO: %02d:%02d:%02d\n", h->clientes.hora, h->clientes.minuto, h->clientes.segundo);
+        for (int i = 0; h->clientes.pedido[i].preco != 0; i++) {
+            printf("PEDIDO: %s %dx", h->clientes.pedido[i].comida, h->clientes.pedido[i].quantidade);
+            if (h->esq != NULL)
+                printf("(E:%s)", h->esq->clientes.pedido[i].comida);
+            if (h->dir != NULL)
+                printf("(D:%s)", h->dir->clientes.pedido[i].comida);
             printf("\n");
         }
-        printf("TOTAL A PAGAR: R$ %.2f\n",h->clientes.valorTotal);
+        printf("TOTAL A PAGAR: R$ %.2f\n", h->clientes.valorTotal);
         imprime(h->esq);
         imprime(h->dir);
     }
