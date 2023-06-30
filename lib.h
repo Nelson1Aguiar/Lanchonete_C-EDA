@@ -3,6 +3,7 @@
 #include<stdlib.h>
 #include<stdbool.h>
 #include <time.h>
+#define TAM 2
 
 typedef struct pedido{
     char comida[30];
@@ -32,6 +33,7 @@ typedef struct caixa{
     bool prioridade;
     int senha;
     heap *pedidoNoCaixa;
+    int quantidadeDeClientes;
 }caixa;
 
 void menu(void);
@@ -43,4 +45,4 @@ heap* uniao(heap * h1, heap* h2);
 heap* uniao_heaps(heap* h1, heap* h2);
 
 void imprime(heap *h);
-
+caixa aumentarCaixas(caixa *c,int tamanho);
