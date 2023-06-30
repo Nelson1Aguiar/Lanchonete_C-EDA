@@ -2,6 +2,7 @@
 #include<conio.h>
 #include<stdlib.h>
 #include<stdbool.h>
+#include <time.h>
 
 typedef struct pedido{
     char comida[30];
@@ -14,6 +15,9 @@ typedef struct cliente{
     int senha;
     pedido pedido[50];
     float valorTotal;
+    int hora;
+    int minuto;
+    int segundo;
 }cliente;
 
 typedef struct no{
