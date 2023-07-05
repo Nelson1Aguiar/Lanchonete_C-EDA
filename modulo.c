@@ -6,13 +6,20 @@ void menu() {
     //--------- iniciando a estrutura --------------------//
     heap *h = NULL;
     cliente c;
-    caixa *caixas = (caixa *) malloc(TAM * sizeof(caixa));
-    caixas[0].pedidoNoCaixa = NULL;
-    caixas[0].prioridade = true;
-    caixas[0].quantidadeDeClientes = 0;
-    caixas[1].pedidoNoCaixa = NULL;
-    caixas[1].prioridade = false;
-    caixas[1].quantidadeDeClientes = 0;
+    caixa *caixas= (caixa*)malloc(sizeof(caixa));
+    No *cabeca=NULL;
+    caixas->num=1;
+    caixas->pedidoNoCaixa = NULL;
+    caixas->prioridade = true;
+    caixas->quantidadeDeClientes = 0;
+    inserirNoComeco(&cabeca, caixas);
+
+    caixas = (caixa*)malloc(sizeof(caixa));
+    caixas->num=2;
+    caixas->pedidoNoCaixa = NULL;
+    caixas->prioridade = false;
+    caixas->quantidadeDeClientes = 0;
+    inserirNoComeco(&cabeca,caixas);
     pedido p;
     int quantidade,atvLanchonete=0,qtdCaixas=TAM;
     int atendimento;
@@ -142,71 +149,29 @@ void menu() {
                                 printf("\nFINALIZAR PEDIDO? DIGITE 1 PARA SIM E 2 PARA NAO:\n");
                                 scanf("%d", &op2);
                                 if (op2 == 1) {
+                                    bool p= c.prioridade;
+                                    int caixaMenosGente= buscarCaixaMenosCliente(cabeca,p);
+                                    listaCaixas(cabeca);
+                                    printf("---------%d",caixaMenosGente);
                                     time(&horaAtual);
                                     timeInfo = localtime(&horaAtual);
                                     c.horaConclusao = timeInfo->tm_hour;
                                     c.minutoConclusao = timeInfo->tm_min;
                                     c.segundoConclusao = timeInfo->tm_sec;
                                     puts("Pedido cadastrado! Realize o pagamento no caixa\n");
-                                    if (atendimento == 1) {
-//                                        for(int i=0;i<qtdCaixas;i++){
-//                                            if(caixas[i].prioridade==c.prioridade){
-//                                                for(int j=0;j<qtdCaixas;j++){
-//                                                    if(caixas[j].prioridade=c.prioridade){
-//                                                        if(caixas[i].quantidadeDeClientes>caixas[j].quantidadeDeClientes){
-//                                                            caixaMenosGente=j;
-//                                                        }
-//                                                        else{
-//                                                            caixaMenosGente=i;
-//                                                        }
-//                                                    }
-//                                                }
-//                                            }
-//                                        }
-                                        c.senha = 2 * senhaPrioritaria;
-                                        heap *novo = cria_heap(c);
-                                        caixas[0].pedidoNoCaixa = uniao(caixas[0].pedidoNoCaixa, novo);
-                                        senhaPrioritaria = senhaPrioritaria + 1;;
-                                        for (int i = 0; i < 50; i++) {
-                                            c.pedido[i].preco = 0;
-                                            c.pedido[i].quantidade = 0;
-                                            strcpy(c.pedido[i].comida, "");
-                                        }
-                                        c.valorTotal = 0;
-                                        op = 0;
-                                        imprime(caixas[0].pedidoNoCaixa);
-                                        caixas[0].quantidadeDeClientes = caixas[0].quantidadeDeClientes + 1;
+                                    c.senha = senhaNaoPrioritaria;
+                                    heap *novo = cria_heap(c);
+                                    buscarUmCaixa(cabeca,caixaMenosGente)->pedidoNoCaixa=uniao(buscarUmCaixa(cabeca,caixaMenosGente)->pedidoNoCaixa, novo);
+                                    buscarUmCaixa(cabeca,caixaMenosGente)->quantidadeDeClientes= buscarUmCaixa(cabeca,caixaMenosGente)->quantidadeDeClientes + 1;
+                                    imprime(buscarUmCaixa(cabeca,caixaMenosGente)->pedidoNoCaixa,buscarUmCaixa(cabeca,caixaMenosGente));
+                                    senhaNaoPrioritaria = senhaNaoPrioritaria + 1;
+                                    for (int i = 0; i < 50; i++) {
+                                        c.pedido[i].preco = 0;
+                                        c.pedido[i].quantidade = 0;
+                                        strcpy(c.pedido[i].comida, "");
                                     }
-                                    if (atendimento == 2) {
-//                                        for(int i=0;i<qtdCaixas;i++){
-//                                            if(caixas[i].prioridade==c.prioridade){
-//                                                for(int j=0;j<qtdCaixas;j++){
-//                                                    if(caixas[j].prioridade=c.prioridade){
-//                                                        if(caixas[i].quantidadeDeClientes>caixas[j].quantidadeDeClientes){
-//                                                            caixaMenosGente=j;
-//                                                        }
-//                                                        else{
-//                                                            caixaMenosGente=i;
-//                                                        }
-//                                                    }
-//                                                }
-//                                            }
-//                                        }
-                                        c.senha = 2 * senhaNaoPrioritaria - 1;
-                                        heap *novo = cria_heap(c);
-                                        caixas[1].pedidoNoCaixa = uniao(caixas[1].pedidoNoCaixa, novo);
-                                        senhaNaoPrioritaria = senhaNaoPrioritaria + 1;
-                                        for (int i = 0; i < 50; i++) {
-                                            c.pedido[i].preco = 0;
-                                            c.pedido[i].quantidade = 0;
-                                            strcpy(c.pedido[i].comida, "");
-                                        }
-                                        c.valorTotal = 0;
-                                        op = 0;
-
-                                        imprime(caixas[1].pedidoNoCaixa);
-                                        caixas[1].quantidadeDeClientes = caixas[1].quantidadeDeClientes + 1;
-                                    }
+                                    c.valorTotal = 0;
+                                    op = 0;
                                 }
                                 if (op2 > 2 || op2 < 1) {
                                     puts("OPCAO INCORRETA,TENTAR NOVAMENTE.");
@@ -223,11 +188,21 @@ void menu() {
                     printf("\n1 - PRIORITARIO\n2 - NAO PRIORITARIO\n");
                     scanf("%d",&abrirCaixa);
                     if(abrirCaixa==1) {
-                        *caixas = aumentarCaixas(caixas, qtdCaixas,true);
+                        caixas =(caixa*)malloc(sizeof(caixa));
+                        caixas->pedidoNoCaixa = NULL;
+                        caixas->quantidadeDeClientes = 0;
+                        caixas->prioridade=true;
+                        caixas->num=qtdCaixas;
+                        inserirNoComeco(&cabeca,caixas);
                         printf("UM NOVO CAIXA PRIORITARIO FOI ABERTO\n");
                     }
                     if(abrirCaixa==2){
-                        *caixas = aumentarCaixas(caixas, qtdCaixas,false);
+                        caixas =(caixa*)malloc(sizeof(caixa));
+                        caixas->pedidoNoCaixa = NULL;
+                        caixas->quantidadeDeClientes = 0;
+                        caixas->prioridade=false;
+                        caixas->num=qtdCaixas;
+                        inserirNoComeco(&cabeca,caixas);
                         printf("UM NOVO CAIXA NAO PRIORITARIO FOI ABERTO\n");
                     }
                     if(abrirCaixa>2||abrirCaixa<1){
@@ -240,21 +215,14 @@ void menu() {
                     int caixaVaiFechar,caixaMenosCliente;
                     printf("Qual caixa deseja fechar?\n");
                     scanf("%d",&caixaVaiFechar);
-                    for(int i=0;i<qtdCaixas;i++){
-                        if(caixas[i].prioridade==caixas[caixaVaiFechar-1].prioridade) {
-                            for (int j = 0; j < qtdCaixas; j++) {
-                                if(caixas[j].prioridade==caixas[caixaVaiFechar-1].prioridade) {
-                                    if (caixas[i].quantidadeDeClientes > caixas[j].quantidadeDeClientes) {
-                                        caixaMenosCliente = j;
-                                    } else {
-                                        caixaMenosCliente = 1;
-                                    }
-                                }
-                            }
-                        }
+                    bool p= buscarUmCaixa(cabeca,caixaVaiFechar)->prioridade;
+                    caixaMenosCliente= buscarCaixaMenosCliente(cabeca,p);
+                    while(buscarUmCaixa(cabeca,caixaVaiFechar)->num==buscarUmCaixa(cabeca,caixaMenosCliente)->num){
+                        buscarUmCaixa(cabeca,caixaVaiFechar)->quantidadeDeClientes=buscarUmCaixa(cabeca,caixaVaiFechar)->quantidadeDeClientes+1;
                     }
-                    uniao(caixas[caixaMenosCliente].pedidoNoCaixa,caixas[caixaVaiFechar].pedidoNoCaixa);
-                    free(caixas[caixaVaiFechar].pedidoNoCaixa);
+                    cabeca->caixas.pedidoNoCaixa=uniao(buscarUmCaixa(cabeca,caixaMenosCliente)->pedidoNoCaixa, buscarUmCaixa(cabeca,caixaVaiFechar)->pedidoNoCaixa);
+                    printf("O CAIXA %d foi o unido com o caixa %d\n",buscarUmCaixa(cabeca,caixaMenosCliente)->num, buscarUmCaixa(cabeca,caixaVaiFechar)->num);
+                    removerCaixa(&cabeca,caixaVaiFechar);
                 }
                 if(atvLanchonete==0){
                     for(int i=0;i<qtdCaixas;i++){
@@ -287,20 +255,6 @@ heap* cria_heap(cliente c){
     h->clientes.segundoConclusao=c.segundoConclusao;
     h->s=1;
     return h;
-}
-
-caixa aumentarCaixas(caixa *c,int tamanho,bool prioridade){
-    caixa *temp = (caixa *)realloc(c, tamanho * sizeof(caixa));
-    temp[tamanho-1].prioridade=prioridade;
-    temp[tamanho-1].pedidoNoCaixa=NULL;
-    temp[tamanho-1].quantidadeDeClientes=0;
-    temp[tamanho-1].senha=0;
-    if (temp == NULL) {
-        perror("Falha ao realocar memória");
-        free(c);
-        return *temp;
-    }
-    return *temp;
 }
 
 void troca_filhos (heap* a){
@@ -341,9 +295,94 @@ heap* remover(heap *h){
     free(h);
     return uniao(esquerdo, direito);
 }
+caixa* buscarUmCaixa(No* cabeca,int c){
+    No* corrente = cabeca;
+    while (corrente != NULL) {
+        if (corrente->caixas.num == c) {
+            return &(corrente->caixas);  // Elemento encontrado
+        }
+        corrente = corrente->proximo;
+    }// Elemento não encontrado
+    return NULL;
+}
 
-void imprime(heap *h) {
+// Função para criar um novo nó com o dado especificado
+No* criarNo(caixa* c) {
+    struct No* novoNo = (struct No*)malloc(sizeof(struct No));
+    novoNo->caixas.quantidadeDeClientes = c->quantidadeDeClientes;
+    novoNo->caixas.pedidoNoCaixa = c->pedidoNoCaixa;
+    novoNo->caixas.prioridade = c->prioridade;
+    novoNo->caixas.num = c->num;
+    novoNo->proximo = NULL;
+    return novoNo;
+}
+
+void inserirNoComeco(No** cabeca, caixa* c) {
+    No* novoNo = criarNo(c);
+    novoNo->caixas = *c;
+    novoNo->proximo = *cabeca;
+    *cabeca = novoNo;
+}
+int buscarCaixaMenosCliente(No* cabeca,bool p){
+    int min=100;
+    if (cabeca == NULL) {
+        printf("A lista está vazia.\n");
+        return 0;
+    }
+
+    No* menorElemento = cabeca;
+
+    while (menorElemento != NULL) {
+            if (min > menorElemento->caixas.quantidadeDeClientes) {
+                if(menorElemento->caixas.prioridade==p){
+                    min=menorElemento->caixas.num;
+                }
+            }
+        menorElemento = menorElemento->proximo;
+    }
+    return min;
+}
+
+// Função para imprimir os elementos da lista
+void listaCaixas(No* no) {
+    while (no != NULL) {
+        imprime(no->caixas.pedidoNoCaixa,&no->caixas);
+        no = no->proximo;
+    }
+    printf("\n");
+}
+void removerCaixa(No** cabeca, int num) {
+    No* temp = *cabeca;
+    No* prev = NULL;
+
+    // Caso especial: remover o elemento do início da lista
+    if (temp != NULL && temp->caixas.num == num) {
+        *cabeca = temp->proximo;
+        free(temp);
+        return;
+    }
+
+    // Procurar o elemento a ser removido
+    while (temp != NULL && temp->caixas.num!= num) {
+        prev = temp;
+        temp = temp->proximo;
+    }
+
+    // Se o elemento não foi encontrado na lista
+    if (temp == NULL) {
+        return;
+    }
+
+    // Remover o elemento da lista
+    prev->proximo = temp->proximo;
+    free(temp);
+}
+
+void imprime(heap *h,caixa *c) {
     if (h != NULL) {
+        if(c->prioridade==true){
+            printf("\nCAIXA PRIORITARIO: %d",c->num);
+        }else printf("\nCAIXA NAO PRIORITARIO: %d",c->num);
         printf("\nSENHA: %d",h->clientes.senha);
         if(h->clientes.prioridade==1){
             printf("\nTIPO ATENDIMENTO: PRIORITARIO\n");
@@ -359,7 +398,7 @@ void imprime(heap *h) {
             printf("\n");
         }
         printf("TOTAL A PAGAR: R$ %.2f\n", h->clientes.valorTotal);
-        imprime(h->esq);
-        imprime(h->dir);
+        imprime(h->esq,c);
+        imprime(h->dir,c);
     }
 }
