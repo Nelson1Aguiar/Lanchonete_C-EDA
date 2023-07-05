@@ -266,7 +266,7 @@ void troca_filhos (heap* a){
 heap* uniao(heap * h1, heap* h2) {
     if(h1 == NULL) return h2;
     if(h2 == NULL) return h1;
-    if(h1->clientes.senha > h2->clientes.senha)
+    if(h1->clientes.senha < h2->clientes.senha)
         return uniao_heaps(h1, h2);
     else
         return uniao_heaps(h2, h1);
