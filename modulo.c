@@ -4,7 +4,6 @@ void menu() {
     int op, op2;
 
     //--------- iniciando a estrutura --------------------//
-    heap *h = NULL;
     cliente c;
     caixa *caixas= (caixa*)malloc(sizeof(caixa));
     No *cabeca=NULL;
@@ -36,10 +35,11 @@ void menu() {
     c.hora=0;
     c.segundo=0;
     c.minuto=0;
-        printf("-----------DESEJA ABRINDO AS ATIVIDADE DA LANCHONETE-----------\n ");
+        printf("-----------ABRINDO AS ATIVIDADE DA LANCHONETE-----------\n ");
         printf("DOIS CAIXAS FORAM ABERTOS, UM PRIORITARIO E UM NAO PRIORITARIO\n");
             do {
-                printf("1 - RECEBER CLIENTE\n2 - ABRIR MAIS UM CAIXA\n3 - FECHAR CAIXA\n0 - ENCERRAR AS ATIVIDADES DA LANCHONETE\n");
+                listaCaixas(cabeca);
+                printf("1 - RECEBER CLIENTE\n2 - ABRIR MAIS UM CAIXA\n3 - FECHAR CAIXA\n4- PAGAMENTO DE UM CLIENTE\n0 - ENCERRAR AS ATIVIDADES DA LANCHONETE\n");
                 scanf("%d", &atvLanchonete);
                 if (atvLanchonete == 1) {
                     LOOP: do {
@@ -224,6 +224,11 @@ void menu() {
                     printf("O CAIXA %d foi o unido com o caixa %d\n",buscarUmCaixa(cabeca,caixaMenosCliente)->num, buscarUmCaixa(cabeca,caixaVaiFechar)->num);
                     removerCaixa(&cabeca,caixaVaiFechar);
                 }
+                if(atvLanchonete==4){
+                    int caixaPaga=0;
+                    printf("Qual caixa deseja realizar o pagamento?");
+                    scanf("%d",&caixaPaga);
+                }
                 if(atvLanchonete==0){
                     for(int i=0;i<qtdCaixas;i++){
                         free(caixas[i].pedidoNoCaixa);
@@ -347,10 +352,11 @@ int buscarCaixaMenosCliente(No* cabeca,bool p){
 // Função para imprimir os elementos da lista
 void listaCaixas(No* no) {
     while (no != NULL) {
-        imprime(no->caixas.pedidoNoCaixa,&no->caixas);
+        letreiro(no->caixas.pedidoNoCaixa,&no->caixas);
         no = no->proximo;
+        printf("\n");
     }
-    printf("\n");
+    printf("\n\n");
 }
 void removerCaixa(No** cabeca, int num) {
     No* temp = *cabeca;
@@ -378,6 +384,90 @@ void removerCaixa(No** cabeca, int num) {
     prev->proximo = temp->proximo;
     free(temp);
 }
+
+
+heapMin* criarHeapSimples(int maximo){
+    heapMin *h=(heapMin *)malloc(sizeof(heapMin));
+    h->n;
+    h->tam=maximo;
+    h->v= malloc(sizeof(cliente)*maximo);
+    return h;
+}
+
+void heap_inserir(heapMin *h,cliente c){
+h->v[h->n]=c;
+h->n++;
+sobe(h,h->n-1);
+}
+
+void sobe(heapMin *h,int pos){
+    int posicaoPai;
+    while(pos>0){
+        posicaoPai=pai(pos);
+        if(h->v[posicaoPai].senha < h->v[pos].senha){
+            break;
+        }
+        trocar(h,posicaoPai,pos);
+        pos=posicaoPai;
+    }
+
+}
+
+void trocar(heapMin *h,int posicaoPai,int pos){
+    cliente aux=h->v[pos];
+    h->v[pos]=h->v[posicaoPai];
+    h->v[posicaoPai]=aux;
+}
+void imprimir(heapMin h){
+    puts("------------Elementos---------------");
+    for(int i=0;i<h.n;i++){
+        printf(" %d -",h.v[i]);
+    }
+}
+cliente* removerSimples(heapMin *h){
+    cliente *topo;
+    *topo= h->v[0];
+    h->v[0]=h->v[h->n-1];
+    h->n--;
+    descer(h,0);
+    return topo;
+}
+
+void descer(heapMin *h,int i){
+    int aux=esq(i);
+    int filho_direita;
+    while(aux<h->n){
+        filho_direita=dir(i);
+        if(filho_direita<h->n){
+            if(h->v[filho_direita].senha<h->v[aux].senha){
+                aux=filho_direita;
+            }
+        }
+        if(h->v[i].senha<h->v[filho_direita].senha){
+            break;
+        }
+        trocar(h,i,aux);
+        i=aux;
+        aux=esq(i);
+    }
+}
+
+void letreiro(heap *h,caixa *c) {
+    if (h != NULL) {
+        if(c->prioridade==true){
+            printf("\nCAIXA PRIORITARIO: %d",c->num);
+        }else printf("\nCAIXA NAO PRIORITARIO: %d",c->num);
+        printf("\nSENHA: %d",h->clientes.senha);
+        printf("\nREALIZE SEU PAGAMENTO");
+    }else{
+        if(c->prioridade==true){
+            printf("\nCAIXA PRIORITARIO: %d",c->num);
+        }else printf("\nCAIXA NAO PRIORITARIO: %d",c->num);
+        printf("\nCAIXA LIVRE");
+    }
+}
+
+
 
 void imprime(heap *h,caixa *c) {
     if (h != NULL) {
