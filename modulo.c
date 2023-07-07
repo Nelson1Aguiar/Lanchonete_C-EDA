@@ -33,9 +33,9 @@ void menu() {
         strcpy(c.pedido[i].comida, "");
     }
     c.valorTotal = 0;
-    c.hora;
-    c.segundo;
-    c.minuto;
+    c.hora=0;
+    c.segundo=0;
+    c.minuto=0;
         printf("-----------DESEJA ABRINDO AS ATIVIDADE DA LANCHONETE-----------\n ");
         printf("DOIS CAIXAS FORAM ABERTOS, UM PRIORITARIO E UM NAO PRIORITARIO\n");
             do {
@@ -151,7 +151,7 @@ void menu() {
                                 if (op2 == 1) {
                                     bool p= c.prioridade;
                                     int caixaMenosGente= buscarCaixaMenosCliente(cabeca,p);
-                                    listaCaixas(cabeca);
+//                                    listaCaixas(cabeca);
                                     printf("---------%d",caixaMenosGente);
                                     time(&horaAtual);
                                     timeInfo = localtime(&horaAtual);
@@ -324,7 +324,7 @@ void inserirNoComeco(No** cabeca, caixa* c) {
     *cabeca = novoNo;
 }
 int buscarCaixaMenosCliente(No* cabeca,bool p){
-    int min=100;
+    int min=100,caixaNum=0;
     if (cabeca == NULL) {
         printf("A lista está vazia.\n");
         return 0;
@@ -335,12 +335,13 @@ int buscarCaixaMenosCliente(No* cabeca,bool p){
     while (menorElemento != NULL) {
             if (min > menorElemento->caixas.quantidadeDeClientes) {
                 if(menorElemento->caixas.prioridade==p){
-                    min=menorElemento->caixas.num;
+                    min=menorElemento->caixas.quantidadeDeClientes;
+                    caixaNum=menorElemento->caixas.num;
                 }
             }
         menorElemento = menorElemento->proximo;
     }
-    return min;
+    return caixaNum;
 }
 
 // Função para imprimir os elementos da lista
