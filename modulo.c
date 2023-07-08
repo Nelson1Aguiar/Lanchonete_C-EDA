@@ -74,7 +74,6 @@ void menu() {
                     if (atendimento == 1 || atendimento == 2) {
                         do {
                             int cont = 0;
-                            //--------------- Exibir menu ---------------------//
                             system("cls");
                             puts("\n------------------------LANCHONETE ----------------------------\n");
                             if (atendimento == 1) {
@@ -98,7 +97,7 @@ void menu() {
                             puts("||--------------------------------------------------------------||");
                             puts("==================================================================");
                             printf("-----------------------INFORME SUA OPCAO:-----------------------\n");
-                            scanf("%d", &op);//Escolha da Opção
+                            scanf("%d", &op);
 
                             switch (op) {
                                 case 1:
@@ -203,6 +202,7 @@ void menu() {
                                 }
                                 c.valorTotal = 0;
                                 op = 0;
+                                atendimento=0;
                             }
                             if (op2 > 2 || op2 < 1) {
                                 puts("OPCAO INCORRETA,TENTAR NOVAMENTE.");
@@ -249,26 +249,40 @@ void menu() {
                 system("cls");
             }
             if (atvLanchonete == 3) {
-                int caixaVaiFechar, caixaMenosCliente;
+                int caixaVaiFechar, caixaMenosCliente,qtdPrioritario= quantidadeDeCaixaPrioritario(cabeca),qtdNaoPrioritario= quantidadeDeCaixaNaoPrioritario(cabeca);
+                bool p;
                 printf("Qual caixa deseja fechar?\n");
                 scanf("%d", &caixaVaiFechar);
-                if (caixaVaiFechar <= qtdCaixas) {
-                    bool p = buscarUmCaixa(cabeca, caixaVaiFechar)->prioridade;
-                    caixaMenosCliente = buscarCaixaMenosCliente(cabeca, p);
-                    while (buscarUmCaixa(cabeca, caixaVaiFechar)->num ==
-                           buscarUmCaixa(cabeca, caixaMenosCliente)->num) {
-                        buscarUmCaixa(cabeca, caixaVaiFechar)->quantidadeDeClientes =
-                                buscarUmCaixa(cabeca, caixaVaiFechar)->quantidadeDeClientes + 1;
-                    }
-                    cabeca->caixas.pedidoNoCaixa = uniao(buscarUmCaixa(cabeca, caixaMenosCliente)->pedidoNoCaixa,
-                                                         buscarUmCaixa(cabeca, caixaVaiFechar)->pedidoNoCaixa);
-                    printf("O CAIXA %d foi o unido com o caixa %d\n", buscarUmCaixa(cabeca, caixaMenosCliente)->num,
-                           buscarUmCaixa(cabeca, caixaVaiFechar)->num);
-                    removerCaixa(&cabeca, caixaVaiFechar);
-                } else {
+                p= buscarUmCaixa(cabeca,caixaVaiFechar)->prioridade;
+                if(p==true && qtdPrioritario<2){
                     system("cls");
-                    printf("ESTE CAIXA NAO EXISTE!\n");
+                    printf("APENAS UM CAIXA PRIORITARIO ABERTO, IMPOSSIVEL FECHAR\n");
                     system("pause");
+                }
+                else if(p==false && qtdNaoPrioritario<2){
+                    system("cls");
+                    printf("APENAS UM CAIXA NAO PRIORITARIO ABERTO, IMPOSSIVEL FECHAR\n");
+                    system("pause");
+                }
+                else {
+                    if (caixaVaiFechar <= qtdCaixas) {
+                        bool p = buscarUmCaixa(cabeca, caixaVaiFechar)->prioridade;
+                        caixaMenosCliente = buscarCaixaMenosCliente(cabeca, p);
+                        while (buscarUmCaixa(cabeca, caixaVaiFechar)->num ==
+                               buscarUmCaixa(cabeca, caixaMenosCliente)->num) {
+                            buscarUmCaixa(cabeca, caixaVaiFechar)->quantidadeDeClientes =
+                                    buscarUmCaixa(cabeca, caixaVaiFechar)->quantidadeDeClientes + 1;
+                        }
+                        cabeca->caixas.pedidoNoCaixa = uniao(buscarUmCaixa(cabeca, caixaMenosCliente)->pedidoNoCaixa,
+                                                             buscarUmCaixa(cabeca, caixaVaiFechar)->pedidoNoCaixa);
+                        printf("O CAIXA %d foi o unido com o caixa %d\n", buscarUmCaixa(cabeca, caixaMenosCliente)->num,
+                               buscarUmCaixa(cabeca, caixaVaiFechar)->num);
+                        removerCaixa(&cabeca, caixaVaiFechar);
+                    } else {
+                        system("cls");
+                        printf("ESTE CAIXA NAO EXISTE!\n");
+                        system("pause");
+                    }
                 }
             }
             if (atvLanchonete == 4) {
@@ -430,12 +444,12 @@ int buscarCaixaMenosCliente(No* cabeca,bool p){
     No* menorElemento = cabeca;
 
     while (menorElemento != NULL) {
-            if (min > menorElemento->caixas.quantidadeDeClientes) {
-                if(menorElemento->caixas.prioridade==p){
-                    min=menorElemento->caixas.quantidadeDeClientes;
-                    caixaNum=menorElemento->caixas.num;
-                }
+        if (min > menorElemento->caixas.quantidadeDeClientes) {
+            if(menorElemento->caixas.prioridade==p){
+                min=menorElemento->caixas.quantidadeDeClientes;
+                caixaNum=menorElemento->caixas.num;
             }
+        }
         menorElemento = menorElemento->proximo;
     }
     return caixaNum;
@@ -456,7 +470,7 @@ void listaCaixas(No* no) {
     while (no != NULL) {
         letreiro(no->caixas.pedidoNoCaixa,&no->caixas);
         no = no->proximo;
-        printf("\n");
+        printf("\n--------------------------------------\n");
     }
     printf("\n\n");
 }
@@ -604,7 +618,26 @@ void notaFiscal(No *no,int caixa,int pagamento) {
         }no = no->proximo;
     }
 }
-
+int quantidadeDeCaixaPrioritario(No *no){
+    int caixa=0;
+    while (no != NULL) {
+        if(no->caixas.prioridade==true){
+            caixa=caixa+1;
+        }
+        no = no->proximo;
+    }
+    return caixa;
+}
+int quantidadeDeCaixaNaoPrioritario(No *no){
+    int caixa=0;
+    while (no != NULL) {
+        if(no->caixas.prioridade==false){
+            caixa=caixa+1;
+        }
+        no = no->proximo;
+    }
+    return caixa;
+}
 void imprime(heap *h,caixa *c) {
     if (h != NULL) {
         if(c->prioridade==true){
