@@ -5,9 +5,6 @@
 #include <time.h>
 #include <string.h>
 #define TAM 2
-#define pai(i) ((i-1)/2)
-#define esq(i) (2*i+1)
-#define dir(i) (2*i+2)
 
 typedef struct pedido{
     char comida[30];
@@ -51,7 +48,6 @@ typedef struct No{
 
 typedef struct{
     cliente *v;
-    int tam;
     int n;
 }heapMin;
 
@@ -77,12 +73,14 @@ void removerCaixa(No** cabeca, int num);
 void menu();
 
 heapMin* criarHeapSimples(int maximo);
-void heap_insere(heapMin *h,cliente c);
-void sobe(heapMin *h,int pos);
-void trocar(heapMin *h,int posicaoPai,int pos);
+void inserirHeapSimples(heapMin* heap, cliente c);
+void subir(heapMin* heap, int i);
+void troca(cliente *a, cliente *b);
 void imprimir(heapMin h);
-cliente* removerSimples(heapMin *h);
-void descer(heapMin *h,int i);
+void removerSimples(heapMin *h);
+void descer(heapMin* heap, int i);
 void letreiro(heap *h,caixa *c);
 bool temCliente(No *no,int num);
 void notaFiscal(No *no,int caixa,int pagamento);
+void liberarCozinha(heapMin* heap);
+void imprimirSimples(heapMin* heap);
