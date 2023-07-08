@@ -83,3 +83,5 @@ bool temCliente(No *no,int num);
 void notaFiscal(No *no,int caixa,int pagamento);
 void liberarCozinha(heapMin* heap);
 void imprimirSimples(heapMin* heap);
+int quantidadeDeCaixaNaoPrioritario(No *no);
+int quantidadeDeCaixaPrioritario(No *no);
