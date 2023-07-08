@@ -39,7 +39,7 @@ void menu() {
         printf("DOIS CAIXAS FORAM ABERTOS, UM PRIORITARIO E UM NAO PRIORITARIO\n");
             do {
                 listaCaixas(cabeca);
-                printf("1 - RECEBER CLIENTE\n2 - ABRIR MAIS UM CAIXA\n3 - FECHAR CAIXA\n4- PAGAMENTO DE UM CLIENTE\n0 - ENCERRAR AS ATIVIDADES DA LANCHONETE\n");
+                printf("1 - RECEBER CLIENTE\n2 - ABRIR MAIS UM CAIXA\n3 - FECHAR CAIXA\n4 - PAGAMENTO DE UM CLIENTE\n0 - ENCERRAR AS ATIVIDADES DA LANCHONETE\n");
                 scanf("%d", &atvLanchonete);
                 if (atvLanchonete == 1) {
                     LOOP: do {
@@ -151,7 +151,6 @@ void menu() {
                                 if (op2 == 1) {
                                     bool p= c.prioridade;
                                     int caixaMenosGente= buscarCaixaMenosCliente(cabeca,p);
-//                                    listaCaixas(cabeca);
                                     printf("---------%d",caixaMenosGente);
                                     time(&horaAtual);
                                     timeInfo = localtime(&horaAtual);
@@ -225,9 +224,26 @@ void menu() {
                     removerCaixa(&cabeca,caixaVaiFechar);
                 }
                 if(atvLanchonete==4){
-                    int caixaPaga=0;
-                    printf("Qual caixa deseja realizar o pagamento?");
+                    int caixaPaga=0,opcao=0;
+                    printf("Qual caixa deseja realizar o pagamento?\n");
                     scanf("%d",&caixaPaga);
+                    if(temCliente(cabeca,caixaPaga)){
+                        printf("Qual a forma de pagamento?\n1 - DINHEIRO\n2 - CARTAO\n");
+                        scanf("%d",&opcao);
+                        system("cls");
+                        if(opcao==1){
+                            printf("PEDIDO PAGO!\n");
+                            printf("-------------NOTA FISCAL-----------");
+                            notaFiscal(cabeca,caixaPaga,1);
+                        }
+                        if(opcao==2){
+                            printf("PEDIDO PAGO!\n");
+                            printf("-------------NOTA FISCAL-----------");
+                            notaFiscal(cabeca,caixaPaga,2);
+                        }
+                    }else{
+                        printf("ESTE CAIXA ESTÁ VAZIO!");
+                    }
                 }
                 if(atvLanchonete==0){
                     for(int i=0;i<qtdCaixas;i++){
@@ -348,6 +364,16 @@ int buscarCaixaMenosCliente(No* cabeca,bool p){
     }
     return caixaNum;
 }
+bool temCliente(No *no,int num){
+    while (no != NULL) {
+        if(no->caixas.num==num){
+            if(no->caixas.quantidadeDeClientes!=0){
+                return true;
+            }else return false;
+        }
+        no = no->proximo;
+    }
+}
 
 // Função para imprimir os elementos da lista
 void listaCaixas(No* no) {
@@ -467,6 +493,31 @@ void letreiro(heap *h,caixa *c) {
     }
 }
 
+void notaFiscal(No *no,int caixa,int pagamento) {
+    while (no !=NULL){
+        if(no->caixas.num==caixa){
+            if (no->caixas.pedidoNoCaixa != NULL) {
+                printf("\nSENHA: %d",no->caixas.pedidoNoCaixa->clientes.senha);
+                if(no->caixas.pedidoNoCaixa->clientes.prioridade==1){
+                    printf("\nTIPO ATENDIMENTO: PRIORITARIO\n");
+                }else printf("\nTIPO ATENDIMENTO: NAO PRIORITARIO\n");
+                printf("HORARIO DE ENTRADA NO SISTEMA: %02d:%02d:%02d\n", no->caixas.pedidoNoCaixa->clientes.hora, no->caixas.pedidoNoCaixa->clientes.minuto, no->caixas.pedidoNoCaixa->clientes.segundo);
+                printf("HORARIO DE CONCLUSAO DO PEDIDO: %02d:%02d:%02d\n",no->caixas.pedidoNoCaixa->clientes.horaConclusao, no->caixas.pedidoNoCaixa->clientes.minutoConclusao, no->caixas.pedidoNoCaixa->clientes.segundoConclusao);
+                for (int i = 0; no->caixas.pedidoNoCaixa->clientes.pedido[i].preco != 0; i++) {
+                    printf("PEDIDO: %s %dx", no->caixas.pedidoNoCaixa->clientes.pedido[i].comida, no->caixas.pedidoNoCaixa->clientes.pedido[i].quantidade);
+                }
+                printf("\nTOTAL PAGO: R$ %.2f\n", no->caixas.pedidoNoCaixa->clientes.valorTotal);
+                if(pagamento==1){
+                    printf("FORMA DE PAGAMENTO: DINHEIRO\n");
+                }else{
+                    printf("FORMA DE PAGAMENTO: CARTAO\n");
+                }
+                
+                system("pause");
+            }
+        }no = no->proximo;
+    }
+}
 
 
 void imprime(heap *h,caixa *c) {
