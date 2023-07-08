@@ -43,13 +43,28 @@ void menu() {
         printf("DOIS CAIXAS FORAM ABERTOS, UM PRIORITARIO E UM NAO PRIORITARIO\n");
         do {
             listaCaixas(cabeca);
-            printf("1 - RECEBER CLIENTE\n2 - ABRIR MAIS UM CAIXA\n3 - FECHAR CAIXA\n4 - PAGAMENTO DE UM CLIENTE\n5 - CONCLUIR PEDIDO NA COZINHA\n0 - ENCERRAR AS ATIVIDADES DA LANCHONETE\n");
+
+            printf("==================================================");
+            printf("\n|| 1 - RECEBER CLIENTE                          ||");
+            printf("\n|| 2 - ABRIR MAIS UM CAIXA                      ||");
+            printf("\n|| 3 - FECHAR CAIXA                             ||");
+            printf("\n|| 4 - PAGAMENTO DE UM CLIENTE                  ||");
+            printf("\n|| 5 - CONCLUIR PEDIDO NA COZINHA               ||");
+            printf("\n|| 0 - ENCERRAR AS ATIVIDADES DA LANCHONETE     ||");
+            printf("\n==================================================\n");
+
             scanf("%d", &atvLanchonete);
             if (atvLanchonete == 1) {
                 LOOP:
                 do {
                     system("cls");
-                    puts("BEM VINDO A NOSSA LANCHONETE!\n1 - PRIORITARIO\n2 - NAO PRIORITARIO\n0 - VOLTAR\n");
+
+                    puts("BEM VINDO A NOSSA LANCHONETE!");
+                    puts("================================");
+                    puts("|| 1 - PRIORITARIO            ||");
+                    puts("|| 2 - NAO PRIORITARIO        ||");
+                    puts("|| 0 - VOLTAR                 ||");
+                    puts("================================");
                     scanf("%d", &atendimento);
                     time(&horaAtual);
                     timeInfo = localtime(&horaAtual);
@@ -61,7 +76,7 @@ void menu() {
                             int cont = 0;
                             //--------------- Exibir menu ---------------------//
                             system("cls");
-                            puts("\n\t\t\t\tLANCHONETE ---\n");
+                            puts("\n------------------------LANCHONETE ----------------------------\n");
                             if (atendimento == 1) {
                                 c.prioridade = true;
                             }
@@ -71,10 +86,18 @@ void menu() {
                             if (atendimento > 2 || atendimento < 1) {
                                 puts("OPCAO INCORRETA!");
                             }
-                            puts("-------------------------CARDAPIO------------------------------");
-                            puts("\t1 - Coxinha de frango - R$2,50\n \t2 - Pastel de frango - R$3,00\n\t3 - Pastel de queijo - R$3,00\n\t"
-                                 "4 - Pastel de carne - R$3,00\n\t5 - Calzone - R$6,00\n\t6 - Pizza - R$30,00\n\t0 - Sair");
-                            printf("\nINFORME SUA OPCAO:\n");
+                            puts("==================================================================");
+                            puts("||------------------------CARDAPIO------------------------------||");
+                            puts("|| 1 - Coxinha de frango - R$2,50                               ||");
+                            puts("|| 2 - Pastel de frango - R$3,00                                ||");
+                            puts("|| 3 - Pastel de queijo - R$3,00                                ||");
+                            puts("|| 4 - Pastel de carne - R$3,00                                 ||");
+                            puts("|| 5 - Calzone- R$6,00                                          ||");
+                            puts("|| 6 - Pizza - R$30,00                                          ||");
+                            puts("|| 0 - Sair                                                     ||");
+                            puts("||--------------------------------------------------------------||");
+                            puts("==================================================================");
+                            printf("-----------------------INFORME SUA OPCAO:-----------------------\n");
                             scanf("%d", &op);//Escolha da Opção
 
                             switch (op) {
@@ -184,15 +207,20 @@ void menu() {
                             if (op2 > 2 || op2 < 1) {
                                 puts("OPCAO INCORRETA,TENTAR NOVAMENTE.");
                             }
-                            getch();
+                            getchar();
                         } while (op != 0);
                     } else system("cls");
-                    getch();
+                    getchar();
                 } while (atendimento != 0);
             }
             if (atvLanchonete == 2) {
                 int abrirCaixa;
-                printf("\n1 - PRIORITARIO\n2 - NAO PRIORITARIO\n0 - VOLTAR\n");
+                printf("=============================");
+                printf("\n|| 1 - PRIORITARIO         ||");
+                printf("\n|| 2 - NAO PRIORITARIO     ||");
+                printf("\n|| 0 - VOLTAR              ||");
+                printf("\n=============================");
+
                 scanf("%d", &abrirCaixa);
                 if (abrirCaixa == 1) {
                     qtdCaixas = qtdCaixas + 1;
@@ -539,15 +567,15 @@ void liberarCozinha(heapMin* heap) {
 void letreiro(heap *h,caixa *c) {
     if (h != NULL) {
         if(c->prioridade==true){
-            printf("\nCAIXA PRIORITARIO: %d",c->num);
-        }else printf("\nCAIXA NAO PRIORITARIO: %d",c->num);
-        printf("\nSENHA: %d",h->clientes.senha);
-        printf("\nREALIZE SEU PAGAMENTO");
+            printf("\tCAIXA PRIORITARIO: %d\t", c->num);
+        }else printf("\n\tCAIXA NAO PRIORITARIO: %d\t",c->num);
+        printf("\n\tSENHA: %d\t",h->clientes.senha);
+        printf("\n\tREALIZE SEU PAGAMENTO\t");
     }else{
         if(c->prioridade==true){
-            printf("\nCAIXA PRIORITARIO: %d",c->num);
-        }else printf("\nCAIXA NAO PRIORITARIO: %d",c->num);
-        printf("\nCAIXA LIVRE");
+            printf("\n\tCAIXA PRIORITARIO: %d\t",c->num);
+        }else printf("\n\tCAIXA NAO PRIORITARIO: %d\t",c->num);
+        printf("\n\tCAIXA LIVRE\t");
     }
 }
 
