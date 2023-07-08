@@ -1,257 +1,305 @@
 #include "lib.h"
 
 void menu() {
-    int op, op2;
+    int abertura;
+    abre:printf("DESEJA ABRIR AS ATIVIDADES DA LANCHONETE?\n - DIGITE 1\n");
+    scanf("%d",&abertura);
+    if(abertura==1) {
+        int op, op2;
+        cliente c;
+        caixa *caixas = (caixa *) malloc(sizeof(caixa));
+        No *cabeca = NULL;
+        caixas->num = 1;
+        caixas->pedidoNoCaixa = NULL;
+        caixas->prioridade = true;
+        caixas->quantidadeDeClientes = 0;
+        inserirNoComeco(&cabeca, caixas);
 
-    //--------- iniciando a estrutura --------------------//
-    cliente c;
-    caixa *caixas= (caixa*)malloc(sizeof(caixa));
-    No *cabeca=NULL;
-    caixas->num=1;
-    caixas->pedidoNoCaixa = NULL;
-    caixas->prioridade = true;
-    caixas->quantidadeDeClientes = 0;
-    inserirNoComeco(&cabeca, caixas);
-
-    caixas = (caixa*)malloc(sizeof(caixa));
-    caixas->num=2;
-    caixas->pedidoNoCaixa = NULL;
-    caixas->prioridade = false;
-    caixas->quantidadeDeClientes = 0;
-    inserirNoComeco(&cabeca,caixas);
-    pedido p;
-    int quantidade,atvLanchonete=0,qtdCaixas=TAM;
-    int atendimento;
-    int senhaPrioritaria = 0;
-    int senhaNaoPrioritaria = 1;
-    struct tm *timeInfo;
-    time_t horaAtual;
-    for (int i = 0; i < 50; i++) {
-        c.pedido[i].preco = 0;
-        c.pedido[i].quantidade = 0;
-        strcpy(c.pedido[i].comida, "");
-    }
-    c.valorTotal = 0;
-    c.hora=0;
-    c.segundo=0;
-    c.minuto=0;
+        caixas = (caixa *) malloc(sizeof(caixa));
+        caixas->num = 2;
+        caixas->pedidoNoCaixa = NULL;
+        caixas->prioridade = false;
+        caixas->quantidadeDeClientes = 0;
+        inserirNoComeco(&cabeca, caixas);
+        pedido p;
+        heapMin *cozinha;
+        cozinha = criarHeapSimples(50);
+        int quantidade, atvLanchonete = 0, qtdCaixas = TAM;
+        int atendimento;
+        int senhaPrioritaria = 0;
+        int senhaNaoPrioritaria = 1;
+        struct tm *timeInfo;
+        time_t horaAtual;
+        for (int i = 0; i < 50; i++) {
+            c.pedido[i].preco = 0;
+            c.pedido[i].quantidade = 0;
+            strcpy(c.pedido[i].comida, "");
+        }
+        c.valorTotal = 0;
+        c.hora = 0;
+        c.segundo = 0;
+        c.minuto = 0;
         printf("-----------ABRINDO AS ATIVIDADE DA LANCHONETE-----------\n ");
         printf("DOIS CAIXAS FORAM ABERTOS, UM PRIORITARIO E UM NAO PRIORITARIO\n");
-            do {
-                listaCaixas(cabeca);
-                printf("1 - RECEBER CLIENTE\n2 - ABRIR MAIS UM CAIXA\n3 - FECHAR CAIXA\n4 - PAGAMENTO DE UM CLIENTE\n0 - ENCERRAR AS ATIVIDADES DA LANCHONETE\n");
-                scanf("%d", &atvLanchonete);
-                if (atvLanchonete == 1) {
-                    LOOP: do {
-                        system("cls");
-                        puts("BEM VINDO A NOSSA LANCHONETE!\n1 - PRIORITARIO\n2 - NAO PRIORITARIO\n0 - VOLTAR\n");
-                        scanf("%d", &atendimento);
-                        time(&horaAtual);
-                        timeInfo = localtime(&horaAtual);
-                        c.hora = timeInfo->tm_hour;
-                        c.minuto = timeInfo->tm_min;
-                        c.segundo = timeInfo->tm_sec;
-                        if(atendimento==1 || atendimento==2) {
-                            do {
-                                int cont = 0;
-                                //--------------- Exibir menu ---------------------//
-                                system("cls");
-                                puts("\n\t\t\t\tLANCHONETE ---\n");
-                                if (atendimento == 1) {
-                                    c.prioridade = true;
-                                }
-                                if (atendimento == 2) {
-                                    c.prioridade = false;
-                                }
-                                if (atendimento > 2 || atendimento < 1) {
-                                    puts("OPCAO INCORRETA!");
-                                }
-                                puts("-------------------------CARDAPIO------------------------------");
-                                puts("\t1 - Coxinha de frango - R$2,50\n \t2 - Pastel de frango - R$3,00\n\t3 - Pastel de queijo - R$3,00\n\t"
-                                     "4 - Pastel de carne - R$3,00\n\t5 - Calzone - R$6,00\n\t6 - Pizza - R$30,00\n\t0 - Sair");
-                                printf("\nINFORME SUA OPCAO:\n");
-                                scanf("%d", &op);//Escolha da Opção
-
-                                switch (op) {
-                                    case 1:
-                                        printf("Digite a quantidade: ");
-                                        scanf("%d", &quantidade);
-                                        while (c.pedido[cont].preco != 0) {
-                                            cont++;
-                                        }
-                                        c.pedido[cont].quantidade = quantidade;
-                                        strcpy(c.pedido[cont].comida, "Coxinha de Frango");
-                                        c.pedido[cont].preco = 2.50;
-                                        c.valorTotal = c.valorTotal + c.pedido[cont].preco * c.pedido[cont].quantidade;
-                                        break;
-                                    case 2:
-                                        printf("Digite a quantidade: ");
-                                        scanf("%d", &quantidade);
-                                        while (c.pedido[cont].preco != 0) {
-                                            cont++;
-                                        }
-                                        c.pedido[cont].quantidade = quantidade;
-                                        strcpy(c.pedido[cont].comida, "Pastel de Frango");
-                                        c.pedido[cont].preco = 3;
-                                        c.valorTotal = c.valorTotal + c.pedido[cont].preco * c.pedido[cont].quantidade;
-                                        break;
-                                    case 3:
-                                        printf("Digite a quantidade: ");
-                                        scanf("%d", &quantidade);
-                                        while (c.pedido[cont].preco != 0) {
-                                            cont++;
-                                        }
-                                        c.pedido[cont].quantidade = quantidade;
-                                        strcpy(c.pedido[cont].comida, "Pastel de Queijo");
-                                        c.pedido[cont].preco = 3;
-                                        c.valorTotal = c.valorTotal + c.pedido[cont].preco * c.pedido[cont].quantidade;
-                                        break;
-                                    case 4:
-                                        printf("Digite a quantidade: ");
-                                        scanf("%d", &quantidade);
-                                        while (c.pedido[cont].preco != 0) {
-                                            cont++;
-                                        }
-                                        c.pedido[cont].quantidade = quantidade;
-                                        strcpy(c.pedido[cont].comida, "Pastel de Carne");
-                                        c.pedido[cont].preco = 3;
-                                        c.valorTotal = c.valorTotal + c.pedido[cont].preco * c.pedido[cont].quantidade;
-                                        break;
-                                    case 5:
-                                        printf("Digite a quantidade: ");
-                                        scanf("%d", &quantidade);
-                                        while (c.pedido[cont].preco != 0) {
-                                            cont++;
-                                        }
-                                        c.pedido[cont].quantidade = quantidade;
-                                        strcpy(c.pedido[cont].comida, "Calzone");
-                                        c.pedido[cont].preco = 6;
-                                        c.valorTotal = c.valorTotal + c.pedido[cont].preco * c.pedido[cont].quantidade;
-                                        break;
-                                    case 6:
-                                        printf("Digite a quantidade: ");
-                                        scanf("%d", &quantidade);
-                                        while (c.pedido[cont].preco != 0) {
-                                            cont++;
-                                        }
-                                        c.pedido[cont].quantidade = quantidade;
-                                        strcpy(c.pedido[cont].comida, "Pizza");
-                                        c.pedido[cont].preco = 30;
-                                        c.valorTotal = c.valorTotal + c.pedido[cont].preco * c.pedido[cont].quantidade;
-                                        break;
-                                    case 0:
-                                        goto LOOP;
-                                        break;
-                                    default:
-                                        puts("OPCAO INCORRETA,TENTAR NOVAMENTE.");
-                                        break;
-                                }
-                                printf("\nFINALIZAR PEDIDO? DIGITE 1 PARA SIM E 2 PARA NAO:\n");
-                                scanf("%d", &op2);
-                                if (op2 == 1) {
-                                    bool p= c.prioridade;
-                                    int caixaMenosGente= buscarCaixaMenosCliente(cabeca,p);
-                                    printf("---------%d",caixaMenosGente);
-                                    time(&horaAtual);
-                                    timeInfo = localtime(&horaAtual);
-                                    c.horaConclusao = timeInfo->tm_hour;
-                                    c.minutoConclusao = timeInfo->tm_min;
-                                    c.segundoConclusao = timeInfo->tm_sec;
-                                    puts("Pedido cadastrado! Realize o pagamento no caixa\n");
-                                    c.senha = senhaNaoPrioritaria;
-                                    heap *novo = cria_heap(c);
-                                    buscarUmCaixa(cabeca,caixaMenosGente)->pedidoNoCaixa=uniao(buscarUmCaixa(cabeca,caixaMenosGente)->pedidoNoCaixa, novo);
-                                    buscarUmCaixa(cabeca,caixaMenosGente)->quantidadeDeClientes= buscarUmCaixa(cabeca,caixaMenosGente)->quantidadeDeClientes + 1;
-                                    imprime(buscarUmCaixa(cabeca,caixaMenosGente)->pedidoNoCaixa,buscarUmCaixa(cabeca,caixaMenosGente));
-                                    senhaNaoPrioritaria = senhaNaoPrioritaria + 1;
-                                    for (int i = 0; i < 50; i++) {
-                                        c.pedido[i].preco = 0;
-                                        c.pedido[i].quantidade = 0;
-                                        strcpy(c.pedido[i].comida, "");
-                                    }
-                                    c.valorTotal = 0;
-                                    op = 0;
-                                }
-                                if (op2 > 2 || op2 < 1) {
-                                    puts("OPCAO INCORRETA,TENTAR NOVAMENTE.");
-                                }
-                                getch();
-                            } while (op != 0);
-                        }else system("cls");
-                        getch();
-                    } while (atendimento != 0);
-                }
-                if (atvLanchonete == 2) {
-                    int abrirCaixa;
-                    qtdCaixas = qtdCaixas + 1;
-                    printf("\n1 - PRIORITARIO\n2 - NAO PRIORITARIO\n");
-                    scanf("%d",&abrirCaixa);
-                    if(abrirCaixa==1) {
-                        caixas =(caixa*)malloc(sizeof(caixa));
-                        caixas->pedidoNoCaixa = NULL;
-                        caixas->quantidadeDeClientes = 0;
-                        caixas->prioridade=true;
-                        caixas->num=qtdCaixas;
-                        inserirNoComeco(&cabeca,caixas);
-                        printf("UM NOVO CAIXA PRIORITARIO FOI ABERTO\n");
-                    }
-                    if(abrirCaixa==2){
-                        caixas =(caixa*)malloc(sizeof(caixa));
-                        caixas->pedidoNoCaixa = NULL;
-                        caixas->quantidadeDeClientes = 0;
-                        caixas->prioridade=false;
-                        caixas->num=qtdCaixas;
-                        inserirNoComeco(&cabeca,caixas);
-                        printf("UM NOVO CAIXA NAO PRIORITARIO FOI ABERTO\n");
-                    }
-                    if(abrirCaixa>2||abrirCaixa<1){
-                        printf("OPCAO INVALIDA!\n");
-                    }
-                    system("pause");
+        do {
+            listaCaixas(cabeca);
+            printf("1 - RECEBER CLIENTE\n2 - ABRIR MAIS UM CAIXA\n3 - FECHAR CAIXA\n4 - PAGAMENTO DE UM CLIENTE\n5 - CONCLUIR PEDIDO NA COZINHA\n0 - ENCERRAR AS ATIVIDADES DA LANCHONETE\n");
+            scanf("%d", &atvLanchonete);
+            if (atvLanchonete == 1) {
+                LOOP:
+                do {
                     system("cls");
+                    puts("BEM VINDO A NOSSA LANCHONETE!\n1 - PRIORITARIO\n2 - NAO PRIORITARIO\n0 - VOLTAR\n");
+                    scanf("%d", &atendimento);
+                    time(&horaAtual);
+                    timeInfo = localtime(&horaAtual);
+                    c.hora = timeInfo->tm_hour;
+                    c.minuto = timeInfo->tm_min;
+                    c.segundo = timeInfo->tm_sec;
+                    if (atendimento == 1 || atendimento == 2) {
+                        do {
+                            int cont = 0;
+                            //--------------- Exibir menu ---------------------//
+                            system("cls");
+                            puts("\n\t\t\t\tLANCHONETE ---\n");
+                            if (atendimento == 1) {
+                                c.prioridade = true;
+                            }
+                            if (atendimento == 2) {
+                                c.prioridade = false;
+                            }
+                            if (atendimento > 2 || atendimento < 1) {
+                                puts("OPCAO INCORRETA!");
+                            }
+                            puts("-------------------------CARDAPIO------------------------------");
+                            puts("\t1 - Coxinha de frango - R$2,50\n \t2 - Pastel de frango - R$3,00\n\t3 - Pastel de queijo - R$3,00\n\t"
+                                 "4 - Pastel de carne - R$3,00\n\t5 - Calzone - R$6,00\n\t6 - Pizza - R$30,00\n\t0 - Sair");
+                            printf("\nINFORME SUA OPCAO:\n");
+                            scanf("%d", &op);//Escolha da Opção
+
+                            switch (op) {
+                                case 1:
+                                    printf("Digite a quantidade: ");
+                                    scanf("%d", &quantidade);
+                                    while (c.pedido[cont].preco != 0) {
+                                        cont++;
+                                    }
+                                    c.pedido[cont].quantidade = quantidade;
+                                    strcpy(c.pedido[cont].comida, "Coxinha de Frango");
+                                    c.pedido[cont].preco = 2.50;
+                                    c.valorTotal = c.valorTotal + c.pedido[cont].preco * c.pedido[cont].quantidade;
+                                    break;
+                                case 2:
+                                    printf("Digite a quantidade: ");
+                                    scanf("%d", &quantidade);
+                                    while (c.pedido[cont].preco != 0) {
+                                        cont++;
+                                    }
+                                    c.pedido[cont].quantidade = quantidade;
+                                    strcpy(c.pedido[cont].comida, "Pastel de Frango");
+                                    c.pedido[cont].preco = 3;
+                                    c.valorTotal = c.valorTotal + c.pedido[cont].preco * c.pedido[cont].quantidade;
+                                    break;
+                                case 3:
+                                    printf("Digite a quantidade: ");
+                                    scanf("%d", &quantidade);
+                                    while (c.pedido[cont].preco != 0) {
+                                        cont++;
+                                    }
+                                    c.pedido[cont].quantidade = quantidade;
+                                    strcpy(c.pedido[cont].comida, "Pastel de Queijo");
+                                    c.pedido[cont].preco = 3;
+                                    c.valorTotal = c.valorTotal + c.pedido[cont].preco * c.pedido[cont].quantidade;
+                                    break;
+                                case 4:
+                                    printf("Digite a quantidade: ");
+                                    scanf("%d", &quantidade);
+                                    while (c.pedido[cont].preco != 0) {
+                                        cont++;
+                                    }
+                                    c.pedido[cont].quantidade = quantidade;
+                                    strcpy(c.pedido[cont].comida, "Pastel de Carne");
+                                    c.pedido[cont].preco = 3;
+                                    c.valorTotal = c.valorTotal + c.pedido[cont].preco * c.pedido[cont].quantidade;
+                                    break;
+                                case 5:
+                                    printf("Digite a quantidade: ");
+                                    scanf("%d", &quantidade);
+                                    while (c.pedido[cont].preco != 0) {
+                                        cont++;
+                                    }
+                                    c.pedido[cont].quantidade = quantidade;
+                                    strcpy(c.pedido[cont].comida, "Calzone");
+                                    c.pedido[cont].preco = 6;
+                                    c.valorTotal = c.valorTotal + c.pedido[cont].preco * c.pedido[cont].quantidade;
+                                    break;
+                                case 6:
+                                    printf("Digite a quantidade: ");
+                                    scanf("%d", &quantidade);
+                                    while (c.pedido[cont].preco != 0) {
+                                        cont++;
+                                    }
+                                    c.pedido[cont].quantidade = quantidade;
+                                    strcpy(c.pedido[cont].comida, "Pizza");
+                                    c.pedido[cont].preco = 30;
+                                    c.valorTotal = c.valorTotal + c.pedido[cont].preco * c.pedido[cont].quantidade;
+                                    break;
+                                case 0:
+                                    goto LOOP;
+                                    break;
+                                default:
+                                    system("cls");
+                                    puts("OPCAO INCORRETA,TENTAR NOVAMENTE.\n");
+                                    system("pause");
+                                    break;
+                            }
+                            printf("\nFINALIZAR PEDIDO? DIGITE 1 PARA SIM E 2 PARA NAO:\n");
+                            scanf("%d", &op2);
+                            if (op2 == 1) {
+                                bool p = c.prioridade;
+                                int caixaMenosGente = buscarCaixaMenosCliente(cabeca, p);
+                                time(&horaAtual);
+                                timeInfo = localtime(&horaAtual);
+                                c.horaConclusao = timeInfo->tm_hour;
+                                c.minutoConclusao = timeInfo->tm_min;
+                                c.segundoConclusao = timeInfo->tm_sec;
+                                puts("Pedido cadastrado! Realize o pagamento no caixa\n");
+                                c.senha = senhaNaoPrioritaria;
+                                heap *novo = cria_heap(c);
+                                buscarUmCaixa(cabeca, caixaMenosGente)->pedidoNoCaixa = uniao(
+                                        buscarUmCaixa(cabeca, caixaMenosGente)->pedidoNoCaixa, novo);
+                                buscarUmCaixa(cabeca, caixaMenosGente)->quantidadeDeClientes =
+                                        buscarUmCaixa(cabeca, caixaMenosGente)->quantidadeDeClientes + 1;
+                                imprime(buscarUmCaixa(cabeca, caixaMenosGente)->pedidoNoCaixa,
+                                        buscarUmCaixa(cabeca, caixaMenosGente));
+                                senhaNaoPrioritaria = senhaNaoPrioritaria + 1;
+                                for (int i = 0; i < 50; i++) {
+                                    c.pedido[i].preco = 0;
+                                    c.pedido[i].quantidade = 0;
+                                    strcpy(c.pedido[i].comida, "");
+                                }
+                                c.valorTotal = 0;
+                                op = 0;
+                            }
+                            if (op2 > 2 || op2 < 1) {
+                                puts("OPCAO INCORRETA,TENTAR NOVAMENTE.");
+                            }
+                            getch();
+                        } while (op != 0);
+                    } else system("cls");
+                    getch();
+                } while (atendimento != 0);
+            }
+            if (atvLanchonete == 2) {
+                int abrirCaixa;
+                printf("\n1 - PRIORITARIO\n2 - NAO PRIORITARIO\n0 - VOLTAR\n");
+                scanf("%d", &abrirCaixa);
+                if (abrirCaixa == 1) {
+                    qtdCaixas = qtdCaixas + 1;
+                    caixas = (caixa *) malloc(sizeof(caixa));
+                    caixas->pedidoNoCaixa = NULL;
+                    caixas->quantidadeDeClientes = 0;
+                    caixas->prioridade = true;
+                    caixas->num = qtdCaixas;
+                    inserirNoComeco(&cabeca, caixas);
+                    printf("UM NOVO CAIXA PRIORITARIO FOI ABERTO\n");
                 }
-                if(atvLanchonete==3){
-                    int caixaVaiFechar,caixaMenosCliente;
-                    printf("Qual caixa deseja fechar?\n");
-                    scanf("%d",&caixaVaiFechar);
-                    bool p= buscarUmCaixa(cabeca,caixaVaiFechar)->prioridade;
-                    caixaMenosCliente= buscarCaixaMenosCliente(cabeca,p);
-                    while(buscarUmCaixa(cabeca,caixaVaiFechar)->num==buscarUmCaixa(cabeca,caixaMenosCliente)->num){
-                        buscarUmCaixa(cabeca,caixaVaiFechar)->quantidadeDeClientes=buscarUmCaixa(cabeca,caixaVaiFechar)->quantidadeDeClientes+1;
+                if (abrirCaixa == 2) {
+                    qtdCaixas = qtdCaixas + 1;
+                    caixas = (caixa *) malloc(sizeof(caixa));
+                    caixas->pedidoNoCaixa = NULL;
+                    caixas->quantidadeDeClientes = 0;
+                    caixas->prioridade = false;
+                    caixas->num = qtdCaixas;
+                    inserirNoComeco(&cabeca, caixas);
+                    printf("UM NOVO CAIXA NAO PRIORITARIO FOI ABERTO\n");
+                }
+                if (abrirCaixa > 2 || abrirCaixa < 0) {
+                    printf("OPCAO INVALIDA!\n");
+                }
+                system("pause");
+                system("cls");
+            }
+            if (atvLanchonete == 3) {
+                int caixaVaiFechar, caixaMenosCliente;
+                printf("Qual caixa deseja fechar?\n");
+                scanf("%d", &caixaVaiFechar);
+                if (caixaVaiFechar <= qtdCaixas) {
+                    bool p = buscarUmCaixa(cabeca, caixaVaiFechar)->prioridade;
+                    caixaMenosCliente = buscarCaixaMenosCliente(cabeca, p);
+                    while (buscarUmCaixa(cabeca, caixaVaiFechar)->num ==
+                           buscarUmCaixa(cabeca, caixaMenosCliente)->num) {
+                        buscarUmCaixa(cabeca, caixaVaiFechar)->quantidadeDeClientes =
+                                buscarUmCaixa(cabeca, caixaVaiFechar)->quantidadeDeClientes + 1;
                     }
-                    cabeca->caixas.pedidoNoCaixa=uniao(buscarUmCaixa(cabeca,caixaMenosCliente)->pedidoNoCaixa, buscarUmCaixa(cabeca,caixaVaiFechar)->pedidoNoCaixa);
-                    printf("O CAIXA %d foi o unido com o caixa %d\n",buscarUmCaixa(cabeca,caixaMenosCliente)->num, buscarUmCaixa(cabeca,caixaVaiFechar)->num);
-                    removerCaixa(&cabeca,caixaVaiFechar);
+                    cabeca->caixas.pedidoNoCaixa = uniao(buscarUmCaixa(cabeca, caixaMenosCliente)->pedidoNoCaixa,
+                                                         buscarUmCaixa(cabeca, caixaVaiFechar)->pedidoNoCaixa);
+                    printf("O CAIXA %d foi o unido com o caixa %d\n", buscarUmCaixa(cabeca, caixaMenosCliente)->num,
+                           buscarUmCaixa(cabeca, caixaVaiFechar)->num);
+                    removerCaixa(&cabeca, caixaVaiFechar);
+                } else {
+                    system("cls");
+                    printf("ESTE CAIXA NAO EXISTE!\n");
+                    system("pause");
                 }
-                if(atvLanchonete==4){
-                    int caixaPaga=0,opcao=0;
-                    printf("Qual caixa deseja realizar o pagamento?\n");
-                    scanf("%d",&caixaPaga);
-                    if(temCliente(cabeca,caixaPaga)){
-                        printf("Qual a forma de pagamento?\n1 - DINHEIRO\n2 - CARTAO\n");
-                        scanf("%d",&opcao);
-                        system("cls");
-                        if(opcao==1){
-                            printf("PEDIDO PAGO!\n");
-                            printf("-------------NOTA FISCAL-----------");
-                            notaFiscal(cabeca,caixaPaga,1);
-                        }
-                        if(opcao==2){
-                            printf("PEDIDO PAGO!\n");
-                            printf("-------------NOTA FISCAL-----------");
-                            notaFiscal(cabeca,caixaPaga,2);
-                        }
-                    }else{
-                        printf("ESTE CAIXA ESTÁ VAZIO!");
+            }
+            if (atvLanchonete == 4) {
+                int caixaPaga = 0, opcao = 0;
+                cliente Cliente;
+                printf("Qual caixa deseja realizar o pagamento?\n");
+                scanf("%d", &caixaPaga);
+                if (temCliente(cabeca, caixaPaga) == true) {
+                    Cliente = buscarUmCaixa(cabeca, caixaPaga)->pedidoNoCaixa->clientes;
+                    printf("Qual a forma de pagamento?\n1 - DINHEIRO\n2 - CARTAO\n");
+                    scanf("%d", &opcao);
+                    system("cls");
+                    if (opcao == 1) {
+                        printf("PEDIDO PAGO!\n");
+                        printf("-------------NOTA FISCAL-----------");
+                        notaFiscal(cabeca, caixaPaga, 1);
                     }
-                }
-                if(atvLanchonete==0){
-                    for(int i=0;i<qtdCaixas;i++){
-                        free(caixas[i].pedidoNoCaixa);
+                    if (opcao == 2) {
+                        printf("PEDIDO PAGO!\n");
+                        printf("-------------NOTA FISCAL-----------");
+                        notaFiscal(cabeca, caixaPaga, 2);
                     }
-                    printf("LANCHONETE FECHADA!");
+                    inserirHeapSimples(cozinha, Cliente);
+                    buscarUmCaixa(cabeca, caixaPaga)->pedidoNoCaixa = remover(
+                            buscarUmCaixa(cabeca, caixaPaga)->pedidoNoCaixa);
+                } else {
+                    system("cls");
+                    printf("ESTE CAIXA ESTA VAZIO!\n");
+                    system("pause");
                 }
-            }while (atvLanchonete != 0);
+            }
+            if (atvLanchonete == 5) {
+                if (cozinha->v[0].pedido[0].preco != 0) {
+                    imprimirSimples(cozinha);
+                    removerSimples(cozinha);
+                } else {
+                    printf("NENHUM PEDIDO NA COZINHA\n");
+                    system("pause");
+                }
+            }
+            if (atvLanchonete == 0) {
+                while(qtdCaixas!=0){
+                    removerCaixa(&cabeca,qtdCaixas);
+                    qtdCaixas=qtdCaixas-1;
+                }
+                liberarCozinha(cozinha);
+                system("cls");
+                printf("LANCHONETE FECHADA!");
+            }
+            if (atvLanchonete < 0 || atvLanchonete > 5) {
+                printf("OPCAO INVALIDA!");
+            }
+        } while (atvLanchonete != 0);
+    }if(abertura>1 || abertura<1){
+        system("cls");
+        printf("OPCAO INVALIDA!\n");
+        system("pause");
+        goto abre;
+    }
 }
 heap* cria_heap(cliente c){
     heap *h = (heap *)malloc(sizeof (heap));
@@ -347,7 +395,7 @@ void inserirNoComeco(No** cabeca, caixa* c) {
 int buscarCaixaMenosCliente(No* cabeca,bool p){
     int min=100,caixaNum=0;
     if (cabeca == NULL) {
-        printf("A lista está vazia.\n");
+        printf("Nenhum caixa aberto.\n");
         return 0;
     }
 
@@ -394,7 +442,6 @@ void removerCaixa(No** cabeca, int num) {
         free(temp);
         return;
     }
-
     // Procurar o elemento a ser removido
     while (temp != NULL && temp->caixas.num!= num) {
         prev = temp;
@@ -412,70 +459,81 @@ void removerCaixa(No** cabeca, int num) {
 }
 
 
-heapMin* criarHeapSimples(int maximo){
-    heapMin *h=(heapMin *)malloc(sizeof(heapMin));
-    h->n;
-    h->tam=maximo;
-    h->v= malloc(sizeof(cliente)*maximo);
-    return h;
+heapMin* criarHeapSimples(int maximo) {
+    heapMin* heap = (heapMin*)malloc(sizeof(heapMin));
+    heap->v = (cliente*)malloc(maximo * sizeof(cliente));
+    heap->n = 0;
+    return heap;
 }
 
-void heap_inserir(heapMin *h,cliente c){
-h->v[h->n]=c;
-h->n++;
-sobe(h,h->n-1);
+void troca(cliente *a, cliente *b) {
+    cliente temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
-void sobe(heapMin *h,int pos){
-    int posicaoPai;
-    while(pos>0){
-        posicaoPai=pai(pos);
-        if(h->v[posicaoPai].senha < h->v[pos].senha){
-            break;
-        }
-        trocar(h,posicaoPai,pos);
-        pos=posicaoPai;
-    }
+void subir(heapMin* heap, int i) {
+    if (i == 0)
+        return;
 
-}
-
-void trocar(heapMin *h,int posicaoPai,int pos){
-    cliente aux=h->v[pos];
-    h->v[pos]=h->v[posicaoPai];
-    h->v[posicaoPai]=aux;
-}
-void imprimir(heapMin h){
-    puts("------------Elementos---------------");
-    for(int i=0;i<h.n;i++){
-        printf(" %d -",h.v[i]);
+    int pai = (i - 1) / 2;
+    if (heap->v[pai].senha > heap->v[i].senha) {
+        troca(&heap->v[pai], &heap->v[i]);
+        subir(heap, pai);
     }
 }
-cliente* removerSimples(heapMin *h){
-    cliente *topo;
-    *topo= h->v[0];
-    h->v[0]=h->v[h->n-1];
-    h->n--;
-    descer(h,0);
-    return topo;
+
+void descer(heapMin* heap, int i) {
+    int esq = 2 * i + 1;
+    int dir = 2 * i + 2;
+    int menor = i;
+
+    if (esq < heap->n && heap->v[esq].senha < heap->v[menor].senha)
+        menor = esq;
+
+    if (dir < heap->n && heap->v[dir].senha < heap->v[menor].senha)
+        menor = dir;
+
+    if (menor != i) {
+        troca(&heap->v[menor], &heap->v[i]);
+        descer(heap, menor);
+    }
 }
 
-void descer(heapMin *h,int i){
-    int aux=esq(i);
-    int filho_direita;
-    while(aux<h->n){
-        filho_direita=dir(i);
-        if(filho_direita<h->n){
-            if(h->v[filho_direita].senha<h->v[aux].senha){
-                aux=filho_direita;
-            }
-        }
-        if(h->v[i].senha<h->v[filho_direita].senha){
-            break;
-        }
-        trocar(h,i,aux);
-        i=aux;
-        aux=esq(i);
+void inserirHeapSimples(heapMin* heap, cliente c) {
+    if (heap->n >= 50) {
+        printf("COZINHA LOTADA!\n");
+        return;
     }
+
+    heap->v[heap->n] = c;
+    subir(heap, heap->n);
+    heap->n++;
+}
+
+void removerSimples(heapMin* heap) {
+    if (heap->n == 0) {
+        printf("COZINHA VAZIA\n");
+    }
+    heap->v[0] = heap->v[heap->n - 1];
+    heap->n--;
+    descer(heap, 0);
+}
+
+void imprimirSimples(heapMin* heap) {
+    system("cls");
+    printf("-----------PEDIDO PRONTO!-----------");
+    printf("\nSENHA: %d", heap->v[0].senha);
+    for(int i=0;heap->v[0].pedido[i].preco!=0;i++){
+        printf("\nPEDIDO: %s %dx", heap->v[0].pedido[i].comida, heap->v[0].pedido[i].quantidade);
+    }
+    printf("\n");
+    system("pause");
+}
+
+void liberarCozinha(heapMin* heap) {
+    free(heap->v);
+    free(heap);
 }
 
 void letreiro(heap *h,caixa *c) {
@@ -512,13 +570,12 @@ void notaFiscal(No *no,int caixa,int pagamento) {
                 }else{
                     printf("FORMA DE PAGAMENTO: CARTAO\n");
                 }
-                
+
                 system("pause");
             }
         }no = no->proximo;
     }
 }
-
 
 void imprime(heap *h,caixa *c) {
     if (h != NULL) {
