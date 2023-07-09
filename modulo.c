@@ -42,6 +42,7 @@ void menu() {
         printf("-----------ABRINDO AS ATIVIDADE DA LANCHONETE-----------\n ");
         printf("DOIS CAIXAS FORAM ABERTOS, UM PRIORITARIO E UM NAO PRIORITARIO\n");
         do {
+            imprimirSimples(cozinha);
             listaCaixas(cabeca);
 
             printf("==================================================");
@@ -203,9 +204,14 @@ void menu() {
                                 c.valorTotal = 0;
                                 op = 0;
                                 atendimento=0;
+                                system("pause");
+                                system("cls");
                             }
                             if (op2 > 2 || op2 < 1) {
-                                puts("OPCAO INCORRETA,TENTAR NOVAMENTE.");
+                                system("cls");
+                                puts("OPCAO INCORRETA,TENTAR NOVAMENTE.\n");
+                                system("pause");
+                                system("cls");
                             }
                             getchar();
                         } while (op != 0);
@@ -312,15 +318,23 @@ void menu() {
                     system("cls");
                     printf("ESTE CAIXA ESTA VAZIO!\n");
                     system("pause");
+                    system("cls");
                 }
+                system("cls");
+                system("pause");
+                system("cls");
             }
             if (atvLanchonete == 5) {
                 if (cozinha->v[0].pedido[0].preco != 0) {
+                    system("cls");
                     imprimirSimples(cozinha);
+                    system("pause");
+                    system("cls");
                     removerSimples(cozinha);
                 } else {
                     printf("NENHUM PEDIDO NA COZINHA\n");
                     system("pause");
+                    system("cls");
                 }
             }
             if (atvLanchonete == 0) {
@@ -410,14 +424,13 @@ caixa* buscarUmCaixa(No* cabeca,int c){
     No* corrente = cabeca;
     while (corrente != NULL) {
         if (corrente->caixas.num == c) {
-            return &(corrente->caixas);  // Elemento encontrado
+            return &(corrente->caixas);
         }
         corrente = corrente->proximo;
-    }// Elemento não encontrado
+    }
     return NULL;
 }
 
-// Função para criar um novo nó com o dado especificado
 No* criarNo(caixa* c) {
     struct No* novoNo = (struct No*)malloc(sizeof(struct No));
     novoNo->caixas.quantidadeDeClientes = c->quantidadeDeClientes;
@@ -465,7 +478,6 @@ bool temCliente(No *no,int num){
     }
 }
 
-// Função para imprimir os elementos da lista
 void listaCaixas(No* no) {
     while (no != NULL) {
         letreiro(no->caixas.pedidoNoCaixa,&no->caixas);
@@ -478,24 +490,19 @@ void removerCaixa(No** cabeca, int num) {
     No* temp = *cabeca;
     No* prev = NULL;
 
-    // Caso especial: remover o elemento do início da lista
     if (temp != NULL && temp->caixas.num == num) {
         *cabeca = temp->proximo;
         free(temp);
         return;
     }
-    // Procurar o elemento a ser removido
     while (temp != NULL && temp->caixas.num!= num) {
         prev = temp;
         temp = temp->proximo;
     }
 
-    // Se o elemento não foi encontrado na lista
     if (temp == NULL) {
         return;
     }
-
-    // Remover o elemento da lista
     prev->proximo = temp->proximo;
     free(temp);
 }
@@ -505,6 +512,9 @@ heapMin* criarHeapSimples(int maximo) {
     heapMin* heap = (heapMin*)malloc(sizeof(heapMin));
     heap->v = (cliente*)malloc(maximo * sizeof(cliente));
     heap->n = 0;
+    for(int i=0;i<50;i++){
+        heap->v[i].senha=0;
+    }
     return heap;
 }
 
@@ -557,20 +567,23 @@ void removerSimples(heapMin* heap) {
     if (heap->n == 0) {
         printf("COZINHA VAZIA\n");
     }
-    heap->v[0] = heap->v[heap->n - 1];
-    heap->n--;
-    descer(heap, 0);
+    else{
+        heap->v[0].senha=0;
+        heap->v[0] = heap->v[heap->n - 1];
+        heap->n--;
+        descer(heap, 0);
+    }
 }
 
 void imprimirSimples(heapMin* heap) {
-    system("cls");
-    printf("-----------PEDIDO PRONTO!-----------");
-    printf("\nSENHA: %d", heap->v[0].senha);
     for(int i=0;heap->v[0].pedido[i].preco!=0;i++){
-        printf("\nPEDIDO: %s %dx", heap->v[0].pedido[i].comida, heap->v[0].pedido[i].quantidade);
+        if(heap->v[0].senha!=0){
+            printf("\n-----------COZINHA-PEDIDO PRONTO!-----------");
+            printf("\n\tSENHA: %d\t", heap->v[0].senha);
+            printf("\n\tPEDIDO: %s %dx\t", heap->v[0].pedido[i].comida, heap->v[0].pedido[i].quantidade);
+        }
     }
-    printf("\n");
-    system("pause");
+    printf("\n--------------------------------------\n");
 }
 
 void liberarCozinha(heapMin* heap) {
@@ -637,6 +650,9 @@ int quantidadeDeCaixaNaoPrioritario(No *no){
         no = no->proximo;
     }
     return caixa;
+}
+cliente* listaCozinha(heapMin *heap){
+
 }
 void imprime(heap *h,caixa *c) {
     if (h != NULL) {
