@@ -225,7 +225,7 @@ void menu() {
                 printf("\n|| 1 - PRIORITARIO         ||");
                 printf("\n|| 2 - NAO PRIORITARIO     ||");
                 printf("\n|| 0 - VOLTAR              ||");
-                printf("\n=============================");
+                printf("\n=============================\n");
 
                 scanf("%d", &abrirCaixa);
                 if (abrirCaixa == 1) {
@@ -360,6 +360,7 @@ void menu() {
 heap* cria_heap(cliente c){
     heap *h = (heap *)malloc(sizeof (heap));
     h->esq=NULL;
+
     h->dir=NULL;
     h->clientes.valorTotal=0;
     h->clientes.prioridade=false;
@@ -576,12 +577,24 @@ void removerSimples(heapMin* heap) {
 }
 
 void imprimirSimples(heapMin* heap) {
-    for(int i=0;heap->v[0].pedido[i].preco!=0;i++){
-        if(heap->v[0].senha!=0){
-            printf("\n-----------COZINHA-PEDIDO PRONTO!-----------");
-            printf("\n\tSENHA: %d\t", heap->v[0].senha);
+    if(heap->v[0].senha!=0){
+        printf("\n-----------COZINHA-PEDIDO PRONTO!-----------");
+        printf("\n\tSENHA: %d\t", heap->v[0].senha);
+        for(int i=0;heap->v[0].pedido[i].preco!=0;i++){
             printf("\n\tPEDIDO: %s %dx\t", heap->v[0].pedido[i].comida, heap->v[0].pedido[i].quantidade);
         }
+    }
+    if(heap->n>1){
+        int i=1;
+        do{
+            if(heap->v[i].senha!=0){
+                for(int j=0;heap->v[i].pedido[j].preco!=0;j++){
+                    printf("\n\n\tPROXIMO PEDIDO: SENHA %d\t",heap->v[i].senha);
+                    printf("\n\tPEDIDO: %s %dx\t", heap->v[i].pedido[j].comida, heap->v[i].pedido[j].quantidade);
+                }
+            }
+            i=i+1;
+        }while(heap->v[i].senha==0);
     }
     printf("\n--------------------------------------\n");
 }
@@ -598,6 +611,9 @@ void letreiro(heap *h,caixa *c) {
         }else printf("\n\tCAIXA NAO PRIORITARIO: %d\t",c->num);
         printf("\n\tSENHA: %d\t",h->clientes.senha);
         printf("\n\tREALIZE SEU PAGAMENTO\t");
+        if(h->esq!=NULL){
+            printf("\n\n\tPROXIMO DA FILA: SENHA %d\t",h->esq->clientes.senha);
+        }
     }else{
         if(c->prioridade==true){
             printf("\n\tCAIXA PRIORITARIO: %d\t",c->num);
@@ -651,9 +667,7 @@ int quantidadeDeCaixaNaoPrioritario(No *no){
     }
     return caixa;
 }
-cliente* listaCozinha(heapMin *heap){
 
-}
 void imprime(heap *h,caixa *c) {
     if (h != NULL) {
         if(c->prioridade==true){
