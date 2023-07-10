@@ -34,7 +34,6 @@ typedef struct no{
 typedef struct caixa{
     int num;
     bool prioridade;
-    int senha;
     heap *pedidoNoCaixa;
     int quantidadeDeClientes;
 }caixa;
@@ -61,7 +60,6 @@ void listaCaixas(No* no);
 int buscarCaixaMenosCliente(No* cabeca,bool p);
 caixa* buscarUmCaixa(No* cabeca,int c);
 void removerCaixa(No** cabeca, int num);
-void menu();
 heapMin* criarHeapSimples(int maximo);
 void inserirHeapSimples(heapMin* heap, cliente c);
 void subir(heapMin* heap, int i);
